@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repository;
 
 namespace AppCoreProj.Controller
 {
@@ -13,59 +15,170 @@ namespace AppCoreProj.Controller
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly DbcontextRepo db;
-        private ILoggerManager Log;
+       // private IRepositoryManger Repo;
+        private IRepositoryBase<Product> Repo;
+         private ILoggerManager Log;
 
-        public ProductController(DbcontextRepo Context, ILoggerManager Ilogger)
-        {
-            db = Context;
-            Log = Ilogger;
         
+        public ProductController(IRepositoryBase<Product> _Repo, ILoggerManager Ilogger)
+        {
+            // ReposMang = _Repo;
+              Repo = _Repo;
+            Log = Ilogger;
         }
-        /* public IActionResult GetAll()
+
+
+        public IActionResult GetAllProduct()
          {
-             return Ok(db.Product);
-         }*/
-        [HttpPut]
+            try
+            {
+                //return Ok(Repo.products.GetproductAsyn(false));
+                return Ok(Repo.FindAll(false));
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"Action is : {nameof(GetAllProduct)}  Error is  {ex.Message}");
+                return StatusCode(500, " Internal Server Error");
+             }
+        }
+
+
+       [HttpPost]
         public IActionResult AddProduct(Product Prod)
         {
-            if (Prod != null)
+            try
             {
-                db.Product.Add(Prod);
-                db.SaveChanges();
-                return Ok();
+                if (Prod == null)
+                {
+                    Log.LogWarn($"the data is not in correct product Format{Prod}");
+                    return BadRequest();
+                }
+                if (Repo.FindByCondition(x => x.Id == Prod.Id, false).FirstOrDefault() != null)
+                {
+                    Log.LogInfo($"The Code Is Not Unique{Prod.Id}");
+                    return Content("the product Code Isnot Unique");
+                }
+
+                Repo.Create(Prod);
+                Repo.SaveChanges();
+                Prod.Photo = saveFile(Prod);
+                return Created("Success", Prod);
+                 
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest();
+                Log.LogError($"Action is : {nameof(AddProduct)}  Error is  {ex.Message}");
+                return StatusCode(500, " Internal Server Error");
             }
+
+          
         }
 
-        [HttpDelete]
+       
+        [HttpDelete("{id}")]
         public IActionResult DeleteProdut(int? id)
         {
-            if (id != null)
+            try
             {
-
-                db.Product.Remove(db.Product.FirstOrDefault(x => x.Id == id));
-                db.SaveChanges();
-                return Ok();
+                if (id != null)
+                {
+                    Product prod = Repo.FindByCondition(x => x.Id == id, false).SingleOrDefault();
+                    DeletProductPic(prod);
+                    Repo.Delete(prod);
+                    return Ok();
+                }
+                return BadRequest();
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                Log.LogError($"Action is : {nameof(DeleteProdut)}  Error is  {ex.Message}");
+                return StatusCode(500, " Internal Server Error");
+            }
 
         }
 
         [HttpGet("{id}")]
         public IActionResult GetProduct(int ?id)
         {
-            if(id!=null)
+            try
             {
-                Log.LogInfo($"logger info {id}");
-                return Ok(db.Product.FirstOrDefault(x => x.Id == id));
+                if (id != null)
+                {
+                    //  Log.LogInfo($"logger info {id}");
+                    return Ok(Repo.FindByCondition(x => x.Id == id, false).SingleOrDefault());
+                }
+                Log.LogError($"the id is Not Found here {id}");
+                return Content("The id is not Valid ");
             }
-            Log.LogError($"the id is Not Found here {id}");
-            return Content("The id is not Valid ");
+            catch (Exception ex)
+            {
+                Log.LogError($"Action is : {nameof(GetProduct)}  Error is  {ex.Message}");
+                return StatusCode(500, " Internal Server Error");
+            }
         }
-        
+
+        [HttpPut]
+        public IActionResult UpdateProduct(Product Prod)
+        {
+            try
+            {
+              if(Prod==null)
+                {
+                    Log.LogWarn($"Action is : {nameof(UpdateProduct)}   Warning Prod is Not in correct format");                 
+                    return BadRequest("the prod is null");
+                }
+                Repo.Update(Prod);
+                saveFile(Prod);
+                return Ok(Prod);
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"Action is : {nameof(UpdateProduct)}  Error is  {ex.Message}");
+                return StatusCode(500, " Internal Server Error");
+            }
+        }
+
+
+
+        //Save File
+        string saveFile(Product Prod)
+        {
+            var postedFile = Request.Form.Files["Image"];
+            string ImageExtension, ImagePath = "";
+            string path = "";
+
+            if (postedFile != null)
+            {
+                DeletProductPic(Prod);
+                ImageExtension = Path.GetExtension(postedFile.FileName);
+                ImagePath = Directory.GetCurrentDirectory();
+                ImagePath = Path.Combine(ImagePath, "Resources", $"{Prod.Id}{ImageExtension}");
+                FileStream fs = new FileStream(ImagePath, FileMode.Create);
+                postedFile.CopyTo(fs);
+                fs.Close();
+                path = Prod.Id + "" + ImageExtension;
+            }
+            return path;
+        }
+        void DeletProductPic(Product Prod)
+        {
+            if (Prod.Photo != string.Empty)
+            {
+                try
+                {
+                    string Root_Path = Directory.GetCurrentDirectory();
+                    string FullPath = Path.Combine(Root_Path, "Resources", "CompanyLogo", (Prod.Id).ToString());
+
+                    System.IO.File.Delete(FullPath);
+                }
+                catch (Exception ex)
+                {
+
+                    Log.LogError($"Action is : {nameof(DeletProductPic)}  Error is  {ex.Message}");
+                }
+
+            }
+        }
+
     }
 }

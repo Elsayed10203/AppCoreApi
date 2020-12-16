@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Entities.Models;
 using LoggerServices;
 using Contracts;
+using Repository;
 
 namespace AppCoreProj.Extensions
 {
@@ -31,5 +32,10 @@ namespace AppCoreProj.Extensions
 
         public static void ConfigureLoggerServices(this IServiceCollection services) =>
           services.AddScoped<ILoggerManager, LoggerManager>();
+
+        public static void ConfigureRepositroryManager(this IServiceCollection services) =>
+          services.AddScoped<IRepositoryBase<Product>, RepositoryBase<Product>>();
+        //services.AddScoped<IRepositoryManger, RepositoryManager>();
+
     }
 }
