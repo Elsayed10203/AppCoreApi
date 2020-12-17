@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities.Configurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Entities.Models
 {
-  public  class DbcontextRepo : DbContext
+  public  class DbcontextRepo :IdentityDbContext
     {
         public DbcontextRepo()
         {
@@ -15,6 +17,13 @@ namespace Entities.Models
             : base(options)
         {
                 
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.ApplyConfiguration(new RoleConfigurations());
+            builder.ApplyConfiguration(new  ProductConfigurations());
         }
         public virtual DbSet<Product> Product { get; set; }
     }

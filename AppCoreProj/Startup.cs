@@ -31,10 +31,13 @@ namespace AppCoreProj
             Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerDocument();
             services.ConfigureCors();
+            services.AddAuthentication();
+            services.ConfigureIdentity();
+            
             services.ConfigureSqlContext(Configuration);
             services.ConfigureLoggerServices();
             services.ConfigureRepositroryManager();
-        }
+         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,12 +50,15 @@ namespace AppCoreProj
             app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All });
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            app.UseStaticFiles(new StaticFileOptions()
+             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
                 RequestPath = new PathString("/Resources")

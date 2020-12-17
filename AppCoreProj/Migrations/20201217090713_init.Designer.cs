@@ -9,24 +9,24 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppCoreProj.Migrations
 {
     [DbContext(typeof(DbcontextRepo))]
-    [Migration("20201215125726_InitialCreate1")]
-    partial class InitialCreate1
+    [Migration("20201217090713_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.0")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Entities.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("ProdId")
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("ProdId")
+                        .UseIdentityColumn();
 
                     b.Property<string>("LastUpdated")
                         .HasColumnType("nvarchar(max)");

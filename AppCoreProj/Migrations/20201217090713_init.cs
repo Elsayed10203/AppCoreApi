@@ -2,7 +2,7 @@
 
 namespace AppCoreProj.Migrations
 {
-    public partial class InitialCreate1 : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,12 +10,12 @@ namespace AppCoreProj.Migrations
                 name: "Product",
                 columns: table => new
                 {
-                    ProdId = table.Column<int>(nullable: false)
+                    ProdId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: false),
-                    Photo = table.Column<string>(nullable: true),
-                    Price = table.Column<decimal>(nullable: false),
-                    LastUpdated = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    LastUpdated = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

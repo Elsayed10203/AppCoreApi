@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AppCoreProj.Migrations
 {
     [DbContext(typeof(DbcontextRepo))]
-    partial class DbcontextRepoModelSnapshot : ModelSnapshot
+    [Migration("20201217144539_CreteRole")]
+    partial class CreteRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

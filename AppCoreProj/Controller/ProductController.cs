@@ -15,16 +15,16 @@ namespace AppCoreProj.Controller
     [ApiController]
     public class ProductController : ControllerBase
     {
-       // private IRepositoryManger Repo;
-        private IRepositoryBase<Product> Repo;
-         private ILoggerManager Log;
+        private ILoggerManager Log;
 
-        
+         private IRepositoryBase<Product> Repo;
+        //  private IRepositoryManger Repo;
+
+        //public ProductController(IRepositoryManger _Repo, ILoggerManager Ilogger)
         public ProductController(IRepositoryBase<Product> _Repo, ILoggerManager Ilogger)
         {
-            // ReposMang = _Repo;
-              Repo = _Repo;
-            Log = Ilogger;
+            Repo = _Repo;
+             Log = Ilogger;
         }
 
 
@@ -83,9 +83,15 @@ namespace AppCoreProj.Controller
                 if (id != null)
                 {
                     Product prod = Repo.FindByCondition(x => x.Id == id, false).SingleOrDefault();
+                    if(prod==null)
+                    {
+                        Log.LogWarn($"Action is : {nameof(DeleteProdut)}  Warn is  {id} is not found");
+                        return NotFound();
+                    }
                     DeletProductPic(prod);
                     Repo.Delete(prod);
-                    return Ok();
+                    Repo.SaveChanges();
+                    return Ok(Repo.FindAll(false));
                 }
                 return BadRequest();
             }
@@ -167,7 +173,7 @@ namespace AppCoreProj.Controller
                 try
                 {
                     string Root_Path = Directory.GetCurrentDirectory();
-                    string FullPath = Path.Combine(Root_Path, "Resources", "CompanyLogo", (Prod.Id).ToString());
+                    string FullPath = Path.Combine(Root_Path, "Resources", (Prod.Id).ToString());
 
                     System.IO.File.Delete(FullPath);
                 }
@@ -179,6 +185,7 @@ namespace AppCoreProj.Controller
 
             }
         }
+
 
     }
 }

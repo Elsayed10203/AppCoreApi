@@ -9,6 +9,7 @@ using Entities.Models;
 using LoggerServices;
 using Contracts;
 using Repository;
+using Microsoft.AspNetCore.Identity;
 
 namespace AppCoreProj.Extensions
 {
@@ -35,7 +36,23 @@ namespace AppCoreProj.Extensions
 
         public static void ConfigureRepositroryManager(this IServiceCollection services) =>
           services.AddScoped<IRepositoryBase<Product>, RepositoryBase<Product>>();
-        //services.AddScoped<IRepositoryManger, RepositoryManager>();
+       // services.AddScoped<IRepositoryManger, RepositoryManager>();
 
+        public  static void ConfigureIdentity(this IServiceCollection Services)
+        {
+            var builder = Services.AddIdentityCore<User>(Us =>
+              {
+                  Us.Password.RequireDigit = true;
+                  Us.Password.RequireLowercase = false;
+                  Us.Password.RequireUppercase = false;
+                  Us.Password.RequireNonAlphanumeric = false;
+                  Us.Password.RequiredLength = 10;
+                  Us.User.RequireUniqueEmail = true;
+
+              });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddEntityFrameworkStores<DbcontextRepo>().AddDefaultTokenProviders ();
+        }
+ 
     }
 }
