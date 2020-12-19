@@ -57,7 +57,7 @@ namespace Repository
 
         void IRepositoryBase<T>.SaveChanges()
         {
-            RepositoryContext.SaveChangesAsync();
+            RepositoryContext.SaveChanges();
         }
     }
 }

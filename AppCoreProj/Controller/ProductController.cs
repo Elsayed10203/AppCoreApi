@@ -7,6 +7,7 @@ using Contracts;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repository;
 
 namespace AppCoreProj.Controller
@@ -44,22 +45,26 @@ namespace AppCoreProj.Controller
 
 
        [HttpPost]
-        public IActionResult AddProduct(Product Prod)
+        public IActionResult AddProduct( )
         {
             try
             {
+                var ObjJson = Request.Form["product"];
+                Product Prod = JsonConvert.DeserializeObject<Product>(ObjJson);
+
                 if (Prod == null)
                 {
                     Log.LogWarn($"the data is not in correct product Format{Prod}");
                     return BadRequest();
                 }
+               /*   
                 if (Repo.FindByCondition(x => x.Id == Prod.Id, false).FirstOrDefault() != null)
                 {
                     Log.LogInfo($"The Code Is Not Unique{Prod.Id}");
                     return Content("the product Code Isnot Unique");
-                }
-
+                }*/
                 Repo.Create(Prod);
+                Prod.lastupdate = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
                 Repo.SaveChanges();
                 Prod.Photo = saveFile(Prod);
                 return Created("Success", Prod);
@@ -124,18 +129,24 @@ namespace AppCoreProj.Controller
         }
 
         [HttpPut]
-        public IActionResult UpdateProduct(Product Prod)
+        public IActionResult UpdateProduct( )
         {
             try
             {
-              if(Prod==null)
+                var ObjJson = Request.Form["product"];
+                Product Prod = JsonConvert.DeserializeObject<Product>(ObjJson);
+
+                if (Prod==null)
                 {
                     Log.LogWarn($"Action is : {nameof(UpdateProduct)}   Warning Prod is Not in correct format");                 
                     return BadRequest("the prod is null");
                 }
-                Repo.Update(Prod);
                 saveFile(Prod);
-                return Ok(Prod);
+
+                Repo.Update(Prod);
+                Prod.lastupdate = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+
+                 return Ok(Prod);
             }
             catch (Exception ex)
             {
@@ -149,23 +160,25 @@ namespace AppCoreProj.Controller
         //Save File
         string saveFile(Product Prod)
         {
-            var postedFile = Request.Form.Files["Image"];
-            string ImageExtension, ImagePath = "";
-            string path = "";
+                 var postedFile = Request.Form.Files["Image"];
+                string ImageExtension, ImagePath = "";
+                string path = "";
 
-            if (postedFile != null)
-            {
-                DeletProductPic(Prod);
-                ImageExtension = Path.GetExtension(postedFile.FileName);
-                ImagePath = Directory.GetCurrentDirectory();
-                ImagePath = Path.Combine(ImagePath, "Resources", $"{Prod.Id}{ImageExtension}");
-                FileStream fs = new FileStream(ImagePath, FileMode.Create);
-                postedFile.CopyTo(fs);
-                fs.Close();
-                path = Prod.Id + "" + ImageExtension;
-            }
-            return path;
+                if (postedFile != null)
+                {
+                    DeletProductPic(Prod);
+                    ImageExtension = Path.GetExtension(postedFile.FileName);
+                    ImagePath = Directory.GetCurrentDirectory();
+                    ImagePath = Path.Combine(ImagePath, "Resources", $"{Prod.Id}{ImageExtension}");
+                    FileStream fs = new FileStream(ImagePath, FileMode.Create);
+                    postedFile.CopyTo(fs);
+                    fs.Close();
+                    path = Prod.Id + "" + ImageExtension;
+                }
+                return path;
+           
         }
+
         void DeletProductPic(Product Prod)
         {
             if (Prod.Photo != string.Empty)
@@ -173,14 +186,14 @@ namespace AppCoreProj.Controller
                 try
                 {
                     string Root_Path = Directory.GetCurrentDirectory();
-                    string FullPath = Path.Combine(Root_Path, "Resources", (Prod.Id).ToString());
+                    string FullPath = Path.Combine(Root_Path, "Resources",Prod.Photo);
 
                     System.IO.File.Delete(FullPath);
                 }
                 catch (Exception ex)
                 {
 
-                    Log.LogError($"Action is : {nameof(DeletProductPic)}  Error is  {ex.Message}");
+                    Log.LogError($"Function is : Delete Picture  Error is  {ex.Message}");
                 }
 
             }

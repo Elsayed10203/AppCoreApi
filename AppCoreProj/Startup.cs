@@ -64,7 +64,8 @@ namespace AppCoreProj
                 RequestPath = new PathString("/Resources")
             }); app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers(
+                     );
             });
         }
     }

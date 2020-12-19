@@ -16,6 +16,6 @@ namespace Entities.Models
         public string Name { get; set; }
         public string Photo { get; set; }
         public decimal Price { get; set; }
-        public string LastUpdated { get; set; }
+        public string lastupdate { get; set; }
     }
 }

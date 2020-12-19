@@ -27,9 +27,6 @@ namespace AppCoreProj.Migrations
                         .HasColumnName("ProdId")
                         .UseIdentityColumn();
 
-                    b.Property<string>("LastUpdated")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -40,6 +37,9 @@ namespace AppCoreProj.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("lastupdate")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Product");
@@ -48,18 +48,18 @@ namespace AppCoreProj.Migrations
                         new
                         {
                             Id = 1,
-                            LastUpdated = "12/3/2013",
                             Name = "ProductTst1",
                             Photo = "",
-                            Price = 1200m
+                            Price = 1200m,
+                            lastupdate = "12/3/2013"
                         },
                         new
                         {
                             Id = 2,
-                            LastUpdated = "12/3/2013",
                             Name = "ProductTst1",
                             Photo = "",
-                            Price = 1200m
+                            Price = 1200m,
+                            lastupdate = "12/3/2013"
                         });
                 });
 
@@ -92,15 +92,15 @@ namespace AppCoreProj.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3d95512b-a42f-483c-a0ef-b0c98b0ec8a2",
-                            ConcurrencyStamp = "7b6f15ba-79ff-441f-9589-bfa612f63505",
+                            Id = "a0200074-e551-4c62-b21b-f8c5a6a77145",
+                            ConcurrencyStamp = "8574be54-19a2-4be2-b28e-1fba48a44842",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "c8ee2be2-195f-4f14-a1f8-7e2c618bcdc8",
-                            ConcurrencyStamp = "8963da0a-32d5-4d61-993c-c8dadb16cac8",
+                            Id = "fcbfe9be-af0a-46c6-8a2a-1905375fb563",
+                            ConcurrencyStamp = "a2d758e8-2e9e-4145-af08-987e28e53fc5",
                             Name = "User",
                             NormalizedName = "USER"
                         });
