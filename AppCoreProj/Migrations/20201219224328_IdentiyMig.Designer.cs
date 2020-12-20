@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AppCoreProj.Migrations
 {
     [DbContext(typeof(DbcontextRepo))]
-    partial class DbcontextRepoModelSnapshot : ModelSnapshot
+    [Migration("20201219224328_IdentiyMig")]
+    partial class IdentiyMig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +39,7 @@ namespace AppCoreProj.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("lastupdateted")
+                    b.Property<string>("lastupdate")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -51,7 +53,7 @@ namespace AppCoreProj.Migrations
                             Name = "ProductTst1",
                             Photo = "",
                             Price = 1200m,
-                            lastupdateted = "12/3/2013"
+                            lastupdate = "12/3/2013"
                         },
                         new
                         {
@@ -59,7 +61,7 @@ namespace AppCoreProj.Migrations
                             Name = "ProductTst1",
                             Photo = "",
                             Price = 1200m,
-                            lastupdateted = "12/3/2013"
+                            lastupdate = "12/3/2013"
                         });
                 });
 
@@ -163,15 +165,15 @@ namespace AppCoreProj.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cf04fec8-140c-448c-8690-3ee955ecc794",
-                            ConcurrencyStamp = "a410dde6-667f-4ed0-9784-aa76a17b05eb",
+                            Id = "b035df02-b846-4d0f-b7cd-a44fde259567",
+                            ConcurrencyStamp = "aa1d80d4-b181-4dad-944b-593051accdb7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "04796d9b-665b-4904-85f0-9abff87dc821",
-                            ConcurrencyStamp = "417267eb-46cf-4092-9ed4-138882027d64",
+                            Id = "89b61a3a-0fee-4271-965b-ff29077bf568",
+                            ConcurrencyStamp = "405f1244-bde7-43f2-ad8a-333ce0ba3389",
                             Name = "User",
                             NormalizedName = "USER"
                         });

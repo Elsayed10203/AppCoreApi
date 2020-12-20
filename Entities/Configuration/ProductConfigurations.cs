@@ -15,7 +15,7 @@ namespace Entities.Configurations
                       Id=1,
                       Name = "ProductTst1",
                       Price = 1200,
-                      lastupdate = "12/3/2013",
+                      lastupdateted = "12/3/2013",
                       Photo = ""
                   },
                  new Product
@@ -23,7 +23,7 @@ namespace Entities.Configurations
                      Id=2,
                      Name = "ProductTst1",
                      Price = 1200,
-                      lastupdate = "12/3/2013",
+                      lastupdateted = "12/3/2013",
                      Photo = ""
                  }
             );

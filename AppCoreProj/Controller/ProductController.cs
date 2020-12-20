@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Contracts;
+using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Repository;
@@ -17,15 +20,19 @@ namespace AppCoreProj.Controller
     public class ProductController : ControllerBase
     {
         private ILoggerManager Log;
+        private readonly UserManager<User> UserManger_;
+       // private readonly IMapper mapp;
 
-         private IRepositoryBase<Product> Repo;
+        private IRepositoryBase<Product> Repo;
         //  private IRepositoryManger Repo;
 
         //public ProductController(IRepositoryManger _Repo, ILoggerManager Ilogger)
-        public ProductController(IRepositoryBase<Product> _Repo, ILoggerManager Ilogger)
+        public ProductController(IRepositoryBase<Product> _Repo, ILoggerManager Ilogger, UserManager<User> UserManger)
         {
             Repo = _Repo;
-             Log = Ilogger;
+            Log = Ilogger;
+           // mapp = _mapp;
+            UserManger_ = UserManger;
         }
 
 
@@ -64,7 +71,7 @@ namespace AppCoreProj.Controller
                     return Content("the product Code Isnot Unique");
                 }*/
                 Repo.Create(Prod);
-                Prod.lastupdate = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+                Prod.lastupdateted = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
                 Repo.SaveChanges();
                 Prod.Photo = saveFile(Prod);
                 return Created("Success", Prod);
@@ -144,7 +151,7 @@ namespace AppCoreProj.Controller
                 saveFile(Prod);
 
                 Repo.Update(Prod);
-                Prod.lastupdate = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+                Prod.lastupdateted = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
 
                  return Ok(Prod);
             }
@@ -200,5 +207,24 @@ namespace AppCoreProj.Controller
         }
 
 
-    }
+
+        //OnlyForAuth
+         [HttpPost("Auth")]
+        public async Task<IActionResult> RegisterUser([FromBody]UserForRegisterationDto UserForRegst)
+        {
+            try
+            {
+                var usr = new User()
+                { UserName = UserForRegst.UserName, FirstName = UserForRegst.FirstName };
+                var res = UserManger_.CreateAsync(usr, UserForRegst.PassWord);
+                await UserManger_.AddToRolesAsync(usr, UserForRegst.Roles);
+                return Ok(UserManger_);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500, "Error");
+            }
+        }
+        }
 }

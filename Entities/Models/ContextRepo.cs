@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Entities.Models
 {
-  public  class DbcontextRepo :IdentityDbContext
+  public  class DbcontextRepo :IdentityDbContext<User>
     {
         public DbcontextRepo()
         {
